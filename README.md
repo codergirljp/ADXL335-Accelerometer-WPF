@@ -1,7 +1,10 @@
 ADXL335-Accelerometer-WPF
 =========================
 This is a simple Windows WPF application written in C# for use with the Teensy 3.1 Accelerometer Project.
-The Teensy 3.1 Accelerometer project can be found at: 
+Instructions on how to use this project can be found at: 
+http://codergirljp.blogspot.com/2014/05/teensy-31-accelerometer-controlling-wpf.html
+
+This project is a continuation of the Teensy 3.1 Accelerometer project found at: 
 http://codergirljp.blogspot.com/2014/05/adxl335-accelerometer-on-teensy-31.html
 
 
