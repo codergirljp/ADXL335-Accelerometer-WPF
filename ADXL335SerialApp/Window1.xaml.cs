@@ -47,14 +47,15 @@ namespace ADXL335
         /// <summary>
         /// Delegate to allow updating window objects from external thread
         /// </summary>
-        /// <param name="message"></param>
-        public delegate void UpdateTextCallback(string message);
+        /// <param name="message">The message from the serial port</param>
+        public delegate void UpdateCallback(string message);
 
         /// <summary>
-        /// 
+        /// Update handler
+        /// Gets called when the serialPort_DataReceivedHandler is called.
         /// </summary>
         /// <param name="message">The message string returned from the serial port</param>
-        private void UpdateText(string message) 
+        private void Update(string message) 
         {
             msgHandler.GetData(message);
 
@@ -116,12 +117,12 @@ namespace ADXL335
         {
             try
             {
-                richTextBox1.Dispatcher.Invoke(new UpdateTextCallback(this.UpdateText), new object[] { message });
+                richTextBox1.Dispatcher.Invoke(new UpdateCallback(this.Update), new object[] { message });
                 
             }
             catch (Exception ex1)
             {
-                richTextBox1.Dispatcher.Invoke(new UpdateTextCallback(this.UpdateText), new object[] { ex1.Message });
+                richTextBox1.Dispatcher.Invoke(new UpdateCallback(this.Update), new object[] { ex1.Message });
             }
         }
 
@@ -140,7 +141,7 @@ namespace ADXL335
 
         /// <summary>
         /// Log Events 
-        /// Used to log event messages to a Sensor Events Log text file if uncommented above.
+        /// Used to log event messages to a SensorEventsLog.txt text file if uncommented  in the Update function above.
         /// </summary>
         /// <param name="EventMessageText">The event message to log.</param>
         private void LogEvents(string EventMessageText)
