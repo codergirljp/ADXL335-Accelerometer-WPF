@@ -17,7 +17,11 @@ The Z axis is mapped a  -45 degree angle from the X,Y axis.
 ADXL335SerialApp/ADXL335SerialApp.sln - 
 Solution file to build all projects needed for the WPF Application.
 
+<<<<<<< HEAD
 ADXL335SerialApp/ADXL335SerialApp.csproj - 
+=======
+ADXL335SerialApp/ADXL335SerialApp.proj - 
+>>>>>>> c1bb88c709c8766709cb4e2206caa83777c22543
 The project file for the WPF interface 
 A simple WPF application to use with the Teensy 3.1 Accelerometer 
 to display the x,y,z axis data as lines on the screen
@@ -25,4 +29,7 @@ to display the x,y,z axis data as lines on the screen
 jp.Comms/jp.Comms/Comms.csproj - 
 Provides serial communications and message protocol 
 to receive data from an ADXL335 Teensy 3.1 project running TeensyAdxl335.ino 
+<<<<<<< HEAD
  
+=======
+>>>>>>> c1bb88c709c8766709cb4e2206caa83777c22543
