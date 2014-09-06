@@ -1,17 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO.Ports;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using jp.Comms;
 
 namespace ADXL335
@@ -21,6 +9,18 @@ namespace ADXL335
     /// </summary>
     public partial class Window1 : Window
     {
+        /// <summary>
+        /// The Com port to use for serial communciations.
+        /// Change this to the com port of the device.
+        /// </summary>
+        const string COMPORT = "COM6";
+
+        /// <summary>
+        /// The Baud Rate used by the serial port.
+        /// This must match the baud rate used by the device.
+        /// </summary>
+        const int BAUDRATE = 38400;
+
         /// <summary>
         /// Serial Port Manager Instance
         /// Provide functionality for handling the send and receive of data 
@@ -35,10 +35,10 @@ namespace ADXL335
         /// </summary>
         Adxl335Protocol msgHandler = new Adxl335Protocol();
 
-        const string comPort = "COM6";
-        const int baudRate = 38400;
-        const bool useDataQueue = false;
-
+        /// <summary>
+        /// Window1 Constructor
+        /// Initializes a new Window1 class and it components
+        /// </summary>
         public Window1()
         {
             InitializeComponent();
@@ -47,11 +47,16 @@ namespace ADXL335
         /// <summary>
         /// Delegate to allow updating window objects from external thread
         /// </summary>
-        /// <param name="message"></param>
-        public delegate void UpdateTextCallback(string message);
-        private void UpdateText(string message) 
+        /// <param name="message">The message from the serial port</param>
+        public delegate void UpdateCallback(string message);
+
+        /// <summary>
+        /// Update handler
+        /// Gets called when the serialPort_DataReceivedHandler is called.
+        /// </summary>
+        /// <param name="message">The message string returned from the serial port</param>
+        private void Update(string message) 
         {
-            //serialPortManager.DataQueue.Dequeue();
             msgHandler.GetData(message);
 
             Xg.X2 = Xg.X1 + (80.0 * msgHandler.yGValue);
@@ -61,9 +66,10 @@ namespace ADXL335
 
            // Uncomment to Log Event Incomming messages to the Text Box 
            // and create a local log file of messages
-           //// string eventMsg=String.Format("{0} - {1}", System.DateTime.Now, message);
-           //// richTextBox1.AppendText(eventMsg);
-           //// LogEvents(eventMsg);
+          /* string eventMsg=String.Format("{0} - {1}", System.DateTime.Now, message);
+             richTextBox1.AppendText(eventMsg);
+             LogEvents(eventMsg);
+           */
         }
 
         /// <summary>
@@ -79,16 +85,12 @@ namespace ADXL335
             {
                 if (button1.Content.ToString() == "Stop")
                 {
+                    serialPortManager.CloseSerialPort();
                     button1.Content = "Start";
-
-                    if (serialPortManager != null && serialPortManager.IsAvailable())
-                    {
-                        serialPortManager.CloseSerialPort();
-                    }
                 }
                 else
                 {
-                    serialPortManager = new SerialPortManager(comPort, baudRate);
+                    serialPortManager = new SerialPortManager(COMPORT, BAUDRATE);
                     serialPortManager.UseDataQueue = false;
                     serialPortManager.OnDataReceived += this.serialPort_DataReceivedHandler;
                     button1.Content = "Stop";
@@ -115,12 +117,12 @@ namespace ADXL335
         {
             try
             {
-                richTextBox1.Dispatcher.Invoke(new UpdateTextCallback(this.UpdateText), new object[] { message });
+                richTextBox1.Dispatcher.Invoke(new UpdateCallback(this.Update), new object[] { message });
                 
             }
             catch (Exception ex1)
             {
-                richTextBox1.Dispatcher.Invoke(new UpdateTextCallback(this.UpdateText), new object[] { ex1.Message });
+                richTextBox1.Dispatcher.Invoke(new UpdateCallback(this.Update), new object[] { ex1.Message });
             }
         }
 
@@ -139,7 +141,7 @@ namespace ADXL335
 
         /// <summary>
         /// Log Events 
-        /// Used to log event messages to a Sensor Events Log text file if uncommented above.
+        /// Used to log event messages to a SensorEventsLog.txt text file if uncommented  in the Update function above.
         /// </summary>
         /// <param name="EventMessageText">The event message to log.</param>
         private void LogEvents(string EventMessageText)
